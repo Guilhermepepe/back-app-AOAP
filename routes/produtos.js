@@ -1,5 +1,6 @@
 const express = require('express')
 const router = express.Router()
+const mysql = require('../mysql').pool
 
 
 // RETORNA TODOS OS PRODUTOS
@@ -11,8 +12,33 @@ router.get('/', (req, res, next) => {
 
 // INSERE UM PRODUTO
 router.post('/', (req, res, next) => {
-    res.status(201).send({
-        mensagem: 'Insere um produto'
+
+    // const produto = {
+    //     nome: req.body.nome,
+    //     preco: req.body.preco
+    // }
+
+    mysql.getConnection((error, conn) => {
+        if(error) { return res.status(500).send({ error: error })}
+        conn.query(
+            'INSER INTO produtos (nome, preco) VALUES (?,?)'
+            [req.body.nome, req.body.preco],
+            (error, resultado, field) => {
+                conn.release()
+                
+                if (error) {
+                    res.status(200).send({
+                        error: error,
+                        response: null
+                    })
+                }
+
+                res.status(201).send({
+                    mensagem: 'Produto inserido com sucesso!',
+                    id_produto: resultado.insertId
+                })
+            }
+        )
     })
 })
 
