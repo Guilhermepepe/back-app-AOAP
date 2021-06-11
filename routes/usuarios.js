@@ -5,19 +5,20 @@ const bcrypt = require('bcrypt')
 const jwt = require('jsonwebtoken')
 
 router.post('/cadastro', (req, res, next) => {
+    const { nome, bairro, cidade, ruanum, cep, datanasc, email, senha }  = req.body
     mysql.getConnection((err, conn) => {
         if(err) { return res.status(500).send({ error: error })}
-        conn.query('SELECT * FROM usuario WHERE email = ?', [req.body.email], (error, results) => {
+        conn.query('SELECT * FROM usuario WHERE email = ?', [email], (error, results) => {
             if(error) { return res.status(500).send({ error: error }) }
             if(results.length > 0){
                 res.status(401).send({ mensagem: "Usuário já cadastrado" })
             }
             else{
-                bcrypt.hash(req.body.senha, 10, (errBcrypt, hash) => {
+                bcrypt.hash(senha, 10, (errBcrypt, hash) => {
                     if(errBcrypt) { return res.status(500).send({ error: errBcrypt })}
                     conn.query(
                         `INSERT INTO usuario (nome_usu,bairro,cidade,rua_num,cep,data_nasc,email,senha) VALUES (?,?,?,?,?,?,?,?)`, 
-                        [req.body.nome, req.body.bairro, req.body.cidade, req.body.ruanum, req.body.cep, req.body.datanasc, req.body.email, hash],
+                        [nome, bairro, cidade, ruanum, cep, datanasc, email, hash],
                         (error, results) => {
                             conn.release()
                             if(error) { return res.status(500).send({ error: error }) }
@@ -25,7 +26,7 @@ router.post('/cadastro', (req, res, next) => {
                                 mensagem: "Usuário criado com sucesso",
                                 usuarioCriado: {
                                     id_usuario: results.insertId,
-                                    email: req.body.email
+                                    email
                                 }
                             }
                             return res.status(201).send(response)
@@ -52,6 +53,7 @@ router.post('/login', (req, res, next) => {
                     return res.status(401).send({ mensagem: 'Falha na autenticação' })
                 }
                 if(result) {
+                    req.session.email=req.body.email
                     const token = jwt.sign({
                         id_usuario: results[0].id_usuario,
                         email: results[0].email
@@ -71,4 +73,27 @@ router.post('/login', (req, res, next) => {
     })
 })
 
+router.post('/logout', (req,res,next)=>{
+    req.session.destroy()
+})
+
+
+router.post('/emergencia', (req,res,next)=>{
+
+})
+
+router.get('/admin', (req,res,next) => {
+    mysql.getConnection((error, conn) => {
+        if(error) { return res.status(500).send({ error: error }) }
+        conn.query('select count(id) as dados from consulta where dia_consulta between current_date()-7 and current_date()', (error, results, fields) => {
+            conn.release()
+            if(error) { return res.status(500).send({ error: error }) }
+            console.log(results)
+            res.status(200).send(results)
+        })
+    })
+})
+
 module.exports = router
+
+
