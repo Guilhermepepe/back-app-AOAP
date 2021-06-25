@@ -20,7 +20,11 @@
     "cors": "^2.8.5",
     "express": "^4.17.1",
     "express-session": "^1.17.2",
+<<<<<<< HEAD
     "jsonwebtoken": "^8.5.1",
+=======
+    "firebase-admin": "^9.9.0",
+>>>>>>> API
     "morgan": "^1.10.0",
     "mysql": "^2.18.1",
     "mysql2": "^2.2.5"

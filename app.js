@@ -5,6 +5,10 @@ const bodyParser = require('body-parser')
 const cors = require('cors')
 const session = require('express-session')
 
+<<<<<<< HEAD
+=======
+
+>>>>>>> API
 
 const rotaProdutos = require('./routes/produtos')
 const rotaPedidos = require('./routes/pedidos')
@@ -57,4 +61,6 @@ app.use((error, req, res, next) => {
     })
 })
 
+
 module.exports = app
+
