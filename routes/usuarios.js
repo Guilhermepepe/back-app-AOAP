@@ -3,20 +3,7 @@ const router = express.Router()
 const mysql = require('../mysql').pool
 const bcrypt = require('bcrypt')
 
-router.post('/cadastro', (req, res, next) => {
-    const { nome, bairro, cidade, ruanum, cep, datanasc, email, senha }  = req.body
-    mysql.getConnection((err, conn) => {
-        if(err) { return res.status(500).send({ error: error })}
-        conn.query('SELECT * FROM usuario WHERE email = ?', [email], (error, results) => {
-            if(error) { return res.status(500).send({ error: error }) }
-            if(results.length > 0){
-                res.status(401).send({ mensagem: "Usuário já cadastrado" })
-            }
-            else{
-                bcrypt.hash(senha, 10, (errBcrypt, hash) => {
-                    if(errBcrypt) { return res.status(500).send({ error: errBcrypt })}
-                    conn.query(
-                        `INSERT INTO usuario (nome_usu,bairro,cidade,rua_num,cep,data_nasc,email,senha) VALUES (?,?,?,?,?,?,?,?)`, 
+router.post('/cadastro', (req, res, next) => { 
     const { nome, bairro, cidade, ruanum, cep, datanasc, email, senha } = req.body
     mysql.getConnection((err, conn) => {
         if (err) { return res.status(500).send({ error: error }) }
