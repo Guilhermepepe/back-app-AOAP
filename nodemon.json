@@ -4,8 +4,6 @@
     "MYSQL_PASSWORD": "gta5foda",
     "MYSQL_DATABASE": "aoap",
     "MYSQL_HOST": "localhost",
-    "MYSQL_PORT": 3306,
-    
-    "JWT_KEY": "segredo"
+    "MYSQL_PORT": 3306
     }
 }
